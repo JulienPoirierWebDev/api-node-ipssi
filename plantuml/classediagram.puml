@@ -1,0 +1,67 @@
+@startuml
+skinparam classAttributeIconSize 0
+hide methods
+
+class User {
+  id : int
+  username : string
+  email : string
+  passwordHash : string
+  createdAt : datetime
+  updatedAt : datetime
+}
+
+class Character {
+  id : int
+  name : string
+  description : text
+  imageUrl : string
+  createdAt : datetime
+  updatedAt : datetime
+}
+
+class Species {
+  id : int
+  name : string
+  description : text
+  createdAt : datetime
+  updatedAt : datetime
+}
+
+class Game {
+  id : int
+  title : string
+  releaseYear : int
+  platform : string
+  description : text
+  createdAt : datetime
+  updatedAt : datetime
+}
+
+class CharacterGame {
+}
+
+class Favorite {
+  createdAt : datetime
+}
+
+class Comment {
+  id : int
+  content : text
+  rating : int
+  createdAt : datetime
+  updatedAt : datetime
+}
+
+Species "1" --> "0..*" Character : appartient à
+Game "1" <-- "0..*" Character : premier jeu
+
+Character "1" -- "0..*" CharacterGame : apparaît
+Game "1" -- "0..*" CharacterGame : contient
+
+User "1" -- "0..*" Favorite : ajoute
+Character "1" -- "0..*" Favorite : est en favori
+
+User "1" -- "0..*" Comment : écrit
+Character "1" -- "0..*" Comment : reçoit
+@enduml

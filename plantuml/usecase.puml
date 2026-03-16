@@ -1,0 +1,46 @@
+@startuml
+left to right direction
+
+actor "Visiteur" as Visitor
+actor "Utilisateur connecté" as User
+actor "Administrateur" as Admin
+
+rectangle "Mario Fandom API / App" {
+  usecase "Consulter la liste\ndes personnages" as UC1
+  usecase "Consulter la fiche\nd'un personnage" as UC2
+  usecase "Consulter la liste\ndes jeux" as UC3
+  usecase "Consulter la liste\ndes espèces" as UC4
+  usecase "Ajouter un personnage\naux favoris" as UC5
+  usecase "Retirer un personnage\ndes favoris" as UC6
+  usecase "Voir mes favoris" as UC7
+  usecase "Commenter un personnage" as UC8
+  usecase "Modifier son commentaire" as UC9
+  usecase "Supprimer son commentaire" as UC10
+
+  usecase "Créer un personnage" as UC11
+  usecase "Modifier un personnage" as UC12
+  usecase "Supprimer un personnage" as UC13
+  usecase "Créer un jeu" as UC14
+  usecase "Créer une espèce" as UC15
+  usecase "Supprimer un commentaire" as UC16
+}
+
+Visitor --> UC1
+Visitor --> UC2
+Visitor --> UC3
+Visitor --> UC4
+
+User --> UC5
+User --> UC6
+User --> UC7
+User --> UC8
+User --> UC9
+User --> UC10
+
+Admin --> UC11
+Admin --> UC12
+Admin --> UC13
+Admin --> UC14
+Admin --> UC15
+Admin --> UC16
+@enduml
