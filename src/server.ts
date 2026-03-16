@@ -3,6 +3,8 @@ import express from "express";
 //on prépare une application vide (pour le moment) app est une instance d'express
 const app = express()
 
+app.use(express.json())
+
 // On enregistre une route : méthode GET sur endpoint (chemin) "/"
 // Une fonction callback (appelé plus tard / après) est associée au combo méthode + endpoint
 // Quand l'app écoute une requête sur "/" avec la méthode GET, alors elle exécuté la fonction
@@ -87,9 +89,44 @@ On récupère tous les perso de l'espèce avec l'id 2 du jeu avec l'id 1250
 GET /api/v1/games/1250/characters/species/2
 GET /api/v1/games/1250/characters?species=2
 
-
-
 */
+
+export type CharacterType = {
+  id:number,
+  name:string,
+  description:string,
+  imageUrl?:string,
+  createdAt:Date,
+  updatedAd:Date
+}
+
+const characters:CharacterType[] = []
+
+app.post('/characters', (request, response) => {
+
+    const body = request.body
+
+    console.log(body);
+
+    const newCharacter : CharacterType = {
+      id:Date.now(),
+      name:body.name,
+      description:body.description,
+      createdAt:new Date(),
+      updatedAd:new Date()
+  }
+
+
+
+  characters.push(newCharacter)
+
+  response.status(201).json({message:"Perso crée !", character : newCharacter})
+})
+
+
+app.get('/characters', (request, response) => {
+  response.json({message:"Données trouvées ", results : characters})
+})
 
 // L'application doit écouter sur un port pour fonctionner.
 app.listen(3000, () => {
