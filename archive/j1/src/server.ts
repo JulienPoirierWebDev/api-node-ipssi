@@ -1,4 +1,5 @@
 import express from "express";
+import { appendFile, readFile } from "node:fs";
 
 //on prépare une application vide (pour le moment) app est une instance d'express
 const app = express()
@@ -15,6 +16,69 @@ app.get("/", (request, response) => {
   // pour que le client reçoive ce que l'on souhaite.
     response.json({message:"Tout est OK sur la route principale"})
 })
+
+
+app.post("/characters", (request, response) => {
+
+  const newCharacter : CharacterType = {
+      id:Date.now(),
+      name:"Mario",
+      description:"Un plombier",
+      imageUrl:"/public/mario.jpg",
+      createdAt:new Date(),
+      updatedAd:new Date()
+  }
+
+    // tenter de lire fichier.
+
+    // S'il y a un fichier en txt
+    // on a la structure [{},{}] -> on JSON.parse
+    // On ajouter la donnée {} avec data.push
+    // [{},{},{}]
+    // On stringify
+    //
+
+
+
+  appendFile("./src/characters.txt",JSON.stringify(newCharacter), (err) => {
+
+    if(!err) {
+      console.log("reussite")
+      response.status(201).json({
+      message:"Le character a été crée",
+      character:newCharacter
+  })
+    } else {
+      console.log(err);
+      response.status(500).json({message:"Oups", error:true})
+    }
+  })
+
+
+})
+
+app.get("/characters", (request, response) => {
+
+  // {XXX}{XXXX}
+  // [{}, {}, {}]
+
+  try {
+
+  readFile("./src/characters.txt", "utf8", (err, data) => {
+
+
+    if(!err) {
+      response.json({message:"reussite",
+        resultats:JSON.parse(data)
+      })
+    }
+  })
+  } catch (error) {
+    response.status(500).json({message: "Nous n'arrivons pas a acceder a l'infos", error:true})
+  }
+
+})
+
 
 app.get("/date", (request, response) => {
   const date = new Date();
@@ -46,7 +110,7 @@ export type CharacterType = {
   updatedAd:Date
 }
 
-const characters:CharacterType[] = [];
+const characters:CharacterType[] = []
 
 app.post('/characters', (request, response) => {
 
@@ -67,27 +131,14 @@ app.post('/characters', (request, response) => {
   response.status(201).json({message:"Perso crée !", character : newCharacter})
 })
 
+
 app.get('/characters', (request, response) => {
   if(characters.length === 0) {
-    response.json({message:"Il n'y a aucun personnage en base ", results : null})
+    response.json({message:"Il n'y a aucun personnage en base "})
   } else {
     response.json({message:"Données trouvées ", results : characters})
   }
 })
-
-
-/*
-TODO :
-
-Faire la suite du CRUD pour characters :
-
-Il faut que l'on puisse : créer un personnage
-Récupérer tous les perso
-En récupérer un avec son ID
-En modifier un avec son ID
-En supprimer un avec son ID
-
-*/
 
 // L'application doit écouter sur un port pour fonctionner.
 app.listen(3000, () => {
