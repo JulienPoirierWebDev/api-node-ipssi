@@ -9,8 +9,6 @@ export type CharacterType = {
   updatedAd: Date;
 };
 
-let characters: CharacterType[] = [];
-
 // Un controller doit manipuler la requête et renvoyer une réponse !
 class CharactersController {
   constructor() {
@@ -26,16 +24,6 @@ class CharactersController {
         .status(400)
         .json({ message: 'Il manque des données', error: true });
     }
-
-    const newCharacter: CharacterType = {
-      id: Date.now(),
-      name: body.name,
-      description: body.description,
-      createdAt: new Date(),
-      updatedAd: new Date(),
-    };
-
-    characters.push(newCharacter);
 
     response
       .status(201)
@@ -62,7 +50,7 @@ class CharactersController {
         .json({ message: "L'id n'est pas un nombre", error: true });
     }
 
-    const character = characters.find((oneCharacter) => oneCharacter.id === id);
+    const character = 
 
     if (!character) {
       return response
