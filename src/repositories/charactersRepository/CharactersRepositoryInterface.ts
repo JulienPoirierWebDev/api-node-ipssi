@@ -1,15 +1,19 @@
-import type { CharacterType } from '../../controllers/CharactersController';
+import type { CharacterType } from '../../controllers/CharactersController.ts';
 
 export type CharacterInfosType = {
   name: string;
   description: string;
 };
+
 interface CharactersRepositoryInterface {
-  createCharacter(characterInfos: CharacterInfosType): void;
-  getAllCharacters(): CharacterType[];
-  getOneCharacterById(id: number): CharacterType | undefined;
-  updateOneCharacterById(id: number): CharacterType;
-  deleteOneCharacterById(): void;
+  createCharacter(newCharacter: CharacterInfosType): Promise<CharacterType>;
+  getAllCharacters(): Promise<CharacterType[]>;
+  getOneCharacterById(id: number): Promise<CharacterType | undefined>;
+  updateOneCharacterById(
+    id: number,
+    data: CharacterInfosType,
+  ): Promise<CharacterType>;
+  deleteOneCharacterById(id:number): Promise<Boolean>;
 }
 
 export type { CharactersRepositoryInterface };

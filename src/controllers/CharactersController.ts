@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import type { CharactersRepositoryInterface } from '../repositories/charactersRepository/CharactersRepositoryInterface.ts';
 
 export type CharacterType = {
   id: number;
@@ -11,11 +12,12 @@ export type CharacterType = {
 
 // Un controller doit manipuler la requête et renvoyer une réponse !
 class CharactersController {
-  constructor() {
-    // rien a déclarer
+  characterRepository: CharactersRepositoryInterface;
+  constructor(characterRepository: CharactersRepositoryInterface) {
+    this.characterRepository = characterRepository;
   }
 
-  createOneCharacter(request: Request, response: Response) {
+  createOneCharacter = async (request: Request, response: Response) => {
     const body = request.body;
 
     if (!body.name || !body.description) {
@@ -25,12 +27,21 @@ class CharactersController {
         .json({ message: 'Il manque des données', error: true });
     }
 
+    const newCharacterInfo = {
+      name: String(body.name),
+      description: String(body.description),
+    };
+
+    const newCharacter =
+      await this.characterRepository.createCharacter(newCharacterInfo);
+
     response
       .status(201)
       .json({ message: 'Perso crée !', character: newCharacter });
-  }
+  };
 
-  getAllCharacters(request: Request, response: Response) {
+  getAllCharacters = async (request: Request, response: Response) => {
+    const characters = await this.characterRepository.getAllCharacters();
     if (characters.length === 0) {
       response.json({
         message: "Il n'y a aucun personnage en base ",
@@ -39,9 +50,9 @@ class CharactersController {
     } else {
       response.json({ message: 'Données trouvées ', results: characters });
     }
-  }
+  };
 
-  getOneCharacterById(request: Request, response: Response) {
+  getOneCharacterById = async (request: Request, response: Response) => {
     const id = Number(request.params.id);
 
     if (isNaN(id)) {
@@ -50,7 +61,7 @@ class CharactersController {
         .json({ message: "L'id n'est pas un nombre", error: true });
     }
 
-    const character = 
+    const character = await this.characterRepository.getOneCharacterById(id);
 
     if (!character) {
       return response
@@ -59,9 +70,12 @@ class CharactersController {
     }
 
     response.json({ message: 'Perso trouvé', result: character });
-  }
+  };
 
-  replaceOneCharacterNameAndDescription(request: Request, response: Response) {
+  replaceOneCharacterNameAndDescription = async (
+    request: Request,
+    response: Response,
+  ) => {
     const id = Number(request.params.id);
 
     if (isNaN(id)) {
@@ -70,25 +84,24 @@ class CharactersController {
         .json({ message: "L'id n'est pas un nombre", error: true });
     }
 
-    const character = characters.find((oneCharacter) => oneCharacter.id === id);
+    const body = request.body;
 
-    if (!character) {
-      return response
-        .status(404)
-        .json({ message: "Il n'y a pas de perso avec cet ID", error: true });
+    if (!body.name || !body.description) {
+      response.status(400).json({
+        message: 'Merci de fourni le nom et la description',
+        error: true,
+      });
     }
 
-    //const body = request.body;
-    const { name, description } = request.body;
-
-    character.name = name;
-    character.description = description;
-    character.updatedAd = new Date();
+    const character = await this.characterRepository.updateOneCharacterById(id, {
+      name: body.name,
+      description: body.description,
+    });
 
     response.json({ message: 'Perso modifié', result: character });
-  }
+  };
 
-  deleteOneCharacterById(request: Request, response: Response) {
+  deleteOneCharacterById = async (request: Request, response: Response) => {
     const id = Number(request.params.id);
 
     if (isNaN(id)) {
@@ -97,27 +110,10 @@ class CharactersController {
         .json({ message: "L'id n'est pas un nombre", error: true });
     }
 
-    //      [a, b, c, d]
-    // index 0  1  2  3
-
-    //Si on veut supprimer c : il faut déja trouver son index.
-    const characterIndex = characters.findIndex(
-      (oneCharacter) => oneCharacter.id === id,
-    );
-
-    console.log(characterIndex);
-
-    if (characterIndex === -1) {
-      return response
-        .status(404)
-        .json({ message: "Il n'y a pas de perso avec cet ID", error: true });
-    }
-
-    // supprimer l'élement qui a l'index X
-    characters.splice(characterIndex, 1); // Le deuxième paramètre signifie qu'il faut supprimer un seul élément
+    const isDeleted = await this.characterRepository.deleteOneCharacterById(id);
 
     response.json({ message: 'Perso supprimé' });
-  }
+  };
 }
 
 export default CharactersController;

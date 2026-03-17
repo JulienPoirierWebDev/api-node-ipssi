@@ -9,8 +9,6 @@
     // See also https://aka.ms/tsconfig/module
     "module": "es2020",
     "target": "es2016",
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
 
     "types": [],
     // For nodejs:
@@ -19,7 +17,7 @@
     // and npm install -D @types/node
     "outDir": "./dist",
     "rootDir": "./src",
-
+    "allowImportingTsExtensions": true, 
     // Other Outputs
     "sourceMap": true,
     "declaration": true,
